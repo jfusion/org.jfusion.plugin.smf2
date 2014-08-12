@@ -9,8 +9,6 @@
  * @link       http://www.jfusion.org
  */
 
-use JFusion\Plugin\Plugin_Front;
-
 /**
  * JFusion Front Class for SMF 1.1.x
  * For detailed descriptions on these functions please check Plugin_Front
@@ -23,7 +21,7 @@ use JFusion\Plugin\Plugin_Front;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU/GPL
  * @link       http://www.jfusion.org
  */
-class Front extends Plugin_Front
+class Front extends \JFusion\Plugin\Front
 {
     /**
      * @return string
