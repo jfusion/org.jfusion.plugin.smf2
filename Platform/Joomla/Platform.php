@@ -14,6 +14,7 @@ use JFusion\Framework;
 use JFusion\User\Userinfo;
 use JFusion\Plugin\Platform\Joomla;
 
+use Joomla\Filesystem\File;
 use Joomla\Language\Text;
 
 use Joomla\Registry\Registry;
@@ -24,7 +25,6 @@ use Psr\Log\LogLevel;
 use JUri;
 use JEventDispatcher;
 use JFactory;
-use JFile;
 
 use RuntimeException;
 use Exception;
@@ -864,7 +864,7 @@ HTML;
 
         $query = array(
         //LAT with first post info
-        LAT . '0' =>
+	    self::LAT . '0' =>
         "(SELECT a.id_topic AS threadid, a.id_last_msg AS postid, b.poster_name AS username, d.real_name AS name, b.id_member AS userid, b.subject AS subject, b.poster_time AS dateline, a.id_board as forumid, c.poster_time as last_post_date
             FROM `#__topics` as a
                 INNER JOIN `#__messages` as b ON a.id_first_msg = b.id_msg
@@ -879,7 +879,7 @@ HTML;
                 $where $guest_where)
         ORDER BY last_post_date $end",
         //LAT with latest post info
-        LAT . '1' =>
+	    self::LAT . '1' =>
         "(SELECT a.id_topic AS threadid, a.id_last_msg AS postid, b.poster_name AS username, d.real_name as name, b.id_member AS userid, c.subject AS subject, b.poster_time AS dateline, a.id_board as forumid, b.poster_time as last_post_date
             FROM `#__topics` as a
                 INNER JOIN `#__messages` as b ON a.id_last_msg = b.id_msg
@@ -894,14 +894,14 @@ HTML;
                 $where $guest_where)
         ORDER BY last_post_date $end",
         //LCT
-        LCT =>
+	    self::LCT =>
         "(SELECT a.id_topic AS threadid, b.id_msg AS postid, b.poster_name AS username, d.real_name as name, b.id_member AS userid, b.subject AS subject, b.body, b.poster_time AS dateline, a.id_board as forumid, b.poster_time as topic_date
             FROM `#__topics` as a
                 INNER JOIN `#__messages` as b ON a.id_first_msg = b.id_msg
                 INNER JOIN `#__messages` as c ON a.id_last_msg = c.id_msg
                 INNER JOIN `#__members`  as d ON b.id_member = d.id_member
                 $where)
-       UNION
+        UNION
             (SELECT a.id_topic AS threadid, b.id_msg AS postid, b.poster_name AS username, b.poster_name as name, b.id_member AS userid, b.subject AS subject, b.body, b.poster_time AS dateline, a.id_board as forumid, b.poster_time as topic_date
             FROM `#__topics` as a
                 INNER JOIN `#__messages` as b ON a.id_first_msg = b.id_msg
@@ -909,7 +909,7 @@ HTML;
                 $where $guest_where)
         ORDER BY topic_date $end",
         //LCP
-        LCP => "
+	    self::LCP => "
         (SELECT b.id_topic AS threadid, b.id_msg AS postid, b.poster_name AS username, d.real_name as name, b.id_member AS userid, b.subject AS subject, b.body, b.poster_time AS dateline, b.id_board as forumid, b.poster_time as last_post_date
             FROM `#__messages` as b
                 INNER JOIN `#__members` as d ON b.id_member = d.id_member
@@ -1241,14 +1241,13 @@ if(!defined(\'_JEXEC\') && strpos($_SERVER[\'QUERY_STRING\'], \'dlattach\') === 
 			case 'disable':
 				if ($error == 0) {
 					//get the joomla path from the file
-					jimport('joomla.filesystem.file');
 					$file_data = file_get_contents($mod_file);
 					$search = '/(\r?\n)\/\/JFUSION REDIRECT START(.*)\/\/JFUSION REDIRECT END/si';
 					preg_match_all($search, $file_data, $matches);
 					//remove any old code
 					if (!empty($matches[1][0])) {
 						$file_data = preg_replace($search, '', $file_data);
-						if (!JFile::write($mod_file, $file_data)) {
+						if (!File::write($mod_file, $file_data)) {
 							$error = 1;
 						}
 					}
@@ -1269,7 +1268,6 @@ if(!defined(\'_JEXEC\') && strpos($_SERVER[\'QUERY_STRING\'], \'dlattach\') === 
 					Framework::raise(LogLevel::WARNING, Text::_('MISSING') . ' ItemID ' . Text::_('MUST BE') . ' ' . $this->getJname(), $this->getJname(), $this->getJname());
 				} else if($error == 0) {
 					//get the joomla path from the file
-					jimport('joomla.filesystem.file');
 					$file_data = file_get_contents($mod_file);
 					$redirect_code = $this->generateRedirectCode($joomla_url, $joomla_itemid);
 
@@ -1277,7 +1275,7 @@ if(!defined(\'_JEXEC\') && strpos($_SERVER[\'QUERY_STRING\'], \'dlattach\') === 
 					$replace = '<?php' . $redirect_code;
 
 					$file_data = preg_replace($search, $replace, $file_data);
-					JFile::write($mod_file, $file_data);
+					File::write($mod_file, $file_data);
 				}
 				break;
 		}
