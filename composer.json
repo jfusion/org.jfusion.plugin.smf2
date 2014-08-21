@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "JFusion\\Plugins\\smf2\\": "."
+            "JFusion\\Plugins\\smf2\\": "src/"
         }
     }
 }
