@@ -808,10 +808,10 @@ HTML;
     /**
      * @param array $usedforums
      * @param string $result_order
-     * @param int $result_limit
+
      * @return array|string
      */
-    function getActivityQuery($usedforums, $result_order, $result_limit)
+    function getActivityQuery($usedforums, $result_order)
     {
         $db = Factory::getDatabase($this->getJname());
 
@@ -847,7 +847,6 @@ HTML;
 		}
 
         $where = (!empty($usedforums)) ? ' WHERE b.id_board IN (' . $usedforums . ') AND a.id_board IN (' . implode(',', $list) . ')' : ' WHERE a.id_board IN (' . implode(',', $list) . ' )';
-		$end = $result_order . ' LIMIT 0,' . $result_limit;
 
         $numargs = func_num_args();
         if ($numargs > 3) {
@@ -877,7 +876,7 @@ HTML;
                 INNER JOIN `#__messages` as b ON a.id_first_msg = b.id_msg
                 INNER JOIN `#__messages` as c ON a.id_last_msg = c.id_msg
                 $where $guest_where)
-        ORDER BY last_post_date $end",
+        ORDER BY last_post_date $result_order",
         //LAT with latest post info
 	    self::LAT . '1' =>
         "(SELECT a.id_topic AS threadid, a.id_last_msg AS postid, b.poster_name AS username, d.real_name as name, b.id_member AS userid, c.subject AS subject, b.poster_time AS dateline, a.id_board as forumid, b.poster_time as last_post_date
@@ -892,7 +891,7 @@ HTML;
                 INNER JOIN `#__messages` as b ON a.id_last_msg = b.id_msg
                 INNER JOIN `#__messages` as c ON a.id_first_msg = c.id_msg
                 $where $guest_where)
-        ORDER BY last_post_date $end",
+        ORDER BY last_post_date $result_order",
         //LCT
 	    self::LCT =>
         "(SELECT a.id_topic AS threadid, b.id_msg AS postid, b.poster_name AS username, d.real_name as name, b.id_member AS userid, b.subject AS subject, b.body, b.poster_time AS dateline, a.id_board as forumid, b.poster_time as topic_date
@@ -907,7 +906,7 @@ HTML;
                 INNER JOIN `#__messages` as b ON a.id_first_msg = b.id_msg
                 INNER JOIN `#__messages` as c ON a.id_last_msg = c.id_msg
                 $where $guest_where)
-        ORDER BY topic_date $end",
+        ORDER BY topic_date $result_order",
         //LCP
 	    self::LCP => "
         (SELECT b.id_topic AS threadid, b.id_msg AS postid, b.poster_name AS username, d.real_name as name, b.id_member AS userid, b.subject AS subject, b.body, b.poster_time AS dateline, b.id_board as forumid, b.poster_time as last_post_date
@@ -920,7 +919,7 @@ HTML;
             FROM `#__messages` as b
             	INNER JOIN `#__topics` as a ON b.id_topic = a.id_topic
                 $where $guest_where)
-        ORDER BY last_post_date $end");
+        ORDER BY last_post_date $result_order");
 
         return $query;
     }
