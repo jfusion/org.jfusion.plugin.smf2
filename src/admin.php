@@ -9,6 +9,7 @@
  * @link       http://www.jfusion.org
  */
 
+use JFusion\Application\Application;
 use JFusion\Factory;
 use JFusion\Framework;
 
@@ -272,7 +273,7 @@ class Admin extends \JFusion\Plugin\Admin
 	{
 		$jname = $this->getJname();
 
-		Factory::getApplication()->loadScriptLanguage(array('MAIN_USERGROUP', 'MEMBERGROUPS', 'POSTGROUP'));
+		Application::getInstance()->loadScriptLanguage(array('MAIN_USERGROUP', 'MEMBERGROUPS', 'POSTGROUP'));
 
 		$postgroups = json_encode($this->getUserpostgroupList());
 
