@@ -194,7 +194,7 @@ class User extends \JFusion\Plugin\User
 			    ->delete('#__log_online')
 			    ->where('id_member = ' . (int)$userinfo->userid);
 
-		    $db->setQuery($query, 0, 1);
+		    $db->setQuery($query);
 		    $db->execute();
 	    } catch (Exception $e) {
 		    $status[LogLevel::ERROR][] = $e->getMessage();
