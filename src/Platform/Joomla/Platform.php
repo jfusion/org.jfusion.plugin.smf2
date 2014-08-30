@@ -1522,7 +1522,7 @@ HTML;
 	 */
 	function getBuffer(&$data)
 	{
-		$mainframe = Application::getInstance();
+		$mainframe = JFactory::getApplication();
 		$jFusion_Route = $mainframe->input->get('jFusion_Route', null, 'raw');
 		if ($jFusion_Route) {
 			$jFusion_Route = unserialize ($jFusion_Route);
@@ -1564,7 +1564,7 @@ HTML;
 
 			//destroy the Joomla session
 			$mainframe->logout();
-			Session::getInstance()->close();
+			JFactory::getSession()->close();
 
 			$cookies = Factory::getCookies();
 			$cookies->addCookie($this->params->get('cookie_name'), '', 0, $this->params->get('cookie_path'), $this->params->get('cookie_domain'), $this->params->get('secure'), $this->params->get('httponly'));

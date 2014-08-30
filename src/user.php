@@ -215,7 +215,17 @@ class User extends \JFusion\Plugin\User
 		if (!empty($userinfo->block) || !empty($userinfo->activation)) {
             $status['error'][] = Text::_('FUSION_BLOCKED_USER');
 		} else {
-            $status = $this->curlLogin($userinfo, $options, $this->params->get('brute_force'));
+			/**
+			 * TODO: trying setting cookies direct curl may not be needed anymore?
+			 * $status = $this->curlLogin($userinfo, $options, $this->params->get('brute_force'));
+			 */
+			$cookie_expire = $this->params->get('cookie_expire');
+
+			// Get the data and path to set it on.
+			$data = serialize(array($userinfo->userid, sha1($userinfo->password . $userinfo->password_salt), time() + $cookie_expire, 2));
+
+			// Set the cookie, $_COOKIE, and session variable.
+			$status['debug'][] = $this->addCookie($this->params->get('cookie_name'), $data, $cookie_expire, $this->params->get('cookie_path'), $this->params->get('cookie_domain'), $this->params->get('secure'), $this->params->get('httponly'));
         }
 		return $status;
     }
