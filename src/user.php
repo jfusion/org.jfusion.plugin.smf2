@@ -15,6 +15,7 @@ use JFusion\User\Userinfo;
 
 use Joomla\Language\Text;
 
+use Novanova\Helpers\IP;
 use Psr\Log\LogLevel;
 
 use Exception;
@@ -219,6 +220,7 @@ class User extends \JFusion\Plugin\User
 		    $update->id_member = $userinfo->userid;
 		    $update->last_login = time();
 		    $update->member_ip = $_SERVER['REMOTE_ADDR'];
+		    $update->member_ip2 = IP::getClientIp();
 
 		    $db->updateObject('#__members', $update, 'id_member');
 

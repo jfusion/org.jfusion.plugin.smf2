@@ -14,7 +14,8 @@
         }
     ],
     "require": {
-        "php": ">=5.3.10"
+        "php": ">=5.3.10",
+        "2nova/helper-ip": "dev-master"
     },
     "require-dev": {
         "jfusion/framework": "dev-master",
