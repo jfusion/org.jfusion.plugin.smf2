@@ -12,7 +12,6 @@
 use JFusion\Application\Application;
 use JFusion\Factory;
 use JFusion\Framework;
-use JFusion\Session\Session;
 use JFusion\User\Userinfo;
 use JFusion\Plugin\Platform\Joomla;
 
@@ -1511,7 +1510,7 @@ HTML;
 		 * @ignore
 		 * @var $platform \JFusion\Plugin\Platform\Joomla
 		 */
-		$platform = Factory::getPlayform('Joomla', $this->getJname());
+		$platform = Factory::getPlatform('Joomla', $this->getJname());
 		return $platform->getPostURL($post->id_topic, $post->id_msg);
 	}
 
@@ -2149,7 +2148,7 @@ HTML;
                 } else if(window.attachEvent) { // IE
                     window.attachEvent(\'onload\', function(){
                         {$temp[1]}
-                    });jfusionButtonConfirmationBox
+                    });
                 }
 JS;
 				$js .='</script>';
