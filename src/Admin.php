@@ -13,6 +13,7 @@ use JFusion\Application\Application;
 use JFusion\Factory;
 use JFusion\Framework;
 
+use JFusion\User\Groups;
 use Joomla\Language\Text;
 
 use Psr\Log\LogLevel;
@@ -165,7 +166,7 @@ class Admin extends \JFusion\Plugin\Admin
      */
     function getDefaultUsergroup()
     {
-	    $usergroup = Framework::getUserGroups($this->getJname(), true);
+	    $usergroup = Groups::get($this->getJname(), true);
 
 	    $group = array();
 	    if ($usergroup !== null) {
@@ -287,72 +288,80 @@ class Admin extends \JFusion\Plugin\Admin
 			var usergroups = JFusion.usergroups[plugin.name];
 			var postgroups = JFusion.postgroups[plugin.name];
 
-			var div = new Element('div');
+
+			var root = $('<div></div>');
 
 			// render default group
-			div.appendChild(new Element('div', {'html': Joomla.JText._('MAIN_USERGROUP')}));
+			root.append($('<div>' + JFusion.Text._('MAIN_USERGROUP') + '</div>'));
 
-		    var defaultselect = new Element('select', {
-		    	'name': 'usergroups['+plugin.name+']['+index+'][defaultgroup]',
-		    	'id': 'usergroups_'+plugin.name+index+'defaultgroup'
-		    });
+			var defaultselect = $('<select></select>');
+			defaultselect.attr('name', 'usergroups['+plugin.name+']['+index+'][defaultgroup]');
+			defaultselect.attr('id', 'usergroups_'+plugin.name+index+'defaultgroup');
 
-		    Array.each(usergroups, function (group) {
-			    var options = {'value': group.id,
-					            'html': group.name};
+    		$.each(usergroups, function( key, group ) {
+    			var options = $('<option></option>');
+				options.val(group.id);
+    			options.html(group.name);
 
 		        if (pair && pair.defaultgroup && pair.defaultgroup == group.id) {
-					options.selected = 'selected';
+					options.attr('selected','selected');
 		        }
 
-				defaultselect.appendChild(new Element('option', options));
-		    });
-		    div.appendChild(defaultselect);
+				defaultselect.append(options);
+    		});
 
-		   	// render default post groups
-			div.appendChild(new Element('div', {'html': Joomla.JText._('POSTGROUP')}));
+		    root.append(defaultselect);
 
-		    var postgroupsselect = new Element('select', {
-		    	'name': 'usergroups['+plugin.name+']['+index+'][postgroup]',
-		    	'id': 'usergroups_'+plugin.name+index+'postgroup'
-		    });
 
-		    Array.each(postgroups, function (group) {
-			    var options = {'value': group.id,
-					            'html': group.name};
+		    // render default post groups
+		    root.append($('<div>' + JFusion.Text._('POSTGROUP') + '</div>'));
 
-	            if (pair && pair.postgroup && pair.postgroup == group.id) {
-					options.selected = 'selected';
-	            }
+			var postgroupsselect = $('<select></select>');
+			postgroupsselect.attr('name', 'usergroups['+plugin.name+']['+index+'][defaultgroup]');
+			postgroupsselect.attr('id', 'usergroups_'+plugin.name+index+'defaultgroup');
 
-				postgroupsselect.appendChild(new Element('option', options));
-		    });
-		    div.appendChild(postgroupsselect);
+    		$.each(postgroups, function( key, group ) {
+    			var options = $('<option></option>');
+				options.val(group.id);
+    			options.html(group.name);
+
+		        if (pair && pair.defaultgroup && pair.defaultgroup == group.id) {
+					options.attr('selected','selected');
+		        }
+
+				postgroupsselect.append(options);
+    		});
+
+    		root.append(postgroupsselect);
+
+
 
 
 			// render default member groups
-			div.appendChild(new Element('div', {'html': Joomla.JText._('MEMBERGROUPS')}));
+			root.append($('<div>' + JFusion.Text._('MEMBERGROUPS') + '</div>'));
 
-		    var membergroupsselect = new Element('select', {
-		    	'name': 'usergroups['+plugin.name+']['+index+'][groups][]',
-		    	'multiple': 'multiple',
-		    	'id': 'usergroups_'+plugin.name+index+'groups'
-		    });
+			var membergroupsselect = $('<select></select>');
+			membergroupsselect.attr('name', 'usergroups['+plugin.name+']['+index+'][groups][]');
+			membergroupsselect.attr('id', 'usergroups_'+plugin.name+index+'groups');
+			membergroupsselect.attr('multiple', 'multiple');
 
-		    Array.each(usergroups, function (group) {
-			    if (group.id !== 0) {
-					var options = {'value': group.id,
-						            'html': group.name};
+    		$.each(usergroups, function( i, group ) {
+    			if (group.id !== 0) {
+	                var options = $('<option></option>');
+					options.val(group.id);
+	                options.html(group.name);
 
 		            if (pair && pair.groups && pair.groups.contains(group.id)) {
-						options.selected = 'selected';
+		                options.attr('selected', 'selected');
 		            }
 
-					membergroupsselect.appendChild(new Element('option', options));
-			    }
-		    });
-		    div.appendChild(membergroupsselect);
-		    return div;
+					membergroupsselect.append(options);
+    			}
+
+    		});
+
+		    root.append(membergroupsselect);
+		    return root;
 		};
 JS;
 		return $js;

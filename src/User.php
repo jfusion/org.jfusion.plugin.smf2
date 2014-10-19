@@ -11,6 +11,7 @@
 
 use JFusion\Factory;
 use JFusion\Framework;
+use JFusion\User\Groups;
 use JFusion\User\Userinfo;
 
 use Joomla\Language\Text;
@@ -635,7 +636,7 @@ class User extends \JFusion\Plugin\User
 
 		$master = Framework::getMaster();
 		if ($master) {
-			$mastergroups = Framework::getUserGroups($master->name);
+			$mastergroups = Groups::get($master->name);
 
 			$groups = array();
 			if ($userinfo) {
