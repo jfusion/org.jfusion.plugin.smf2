@@ -348,7 +348,7 @@ class Admin extends \JFusion\Plugin\Admin
 					options.val(group.id);
 	                options.html(group.name);
 
-		            if (pair && pair.groups && pair.groups.contains(group.id)) {
+		            if (pair && pair.groups && $.inArray(group.id, pair.groups) >= 0) {
 		                options.attr('selected', 'selected');
 		            }
 
