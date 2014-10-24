@@ -286,11 +286,10 @@ class Admin extends \JFusion\Plugin\Admin
 
 		JFusion.renderPlugin['{$jname}'] = function(index, plugin, pair, usergroups) {
 			var postgroups = JFusion.postgroups[plugin.name];
+			var defaultgroup = $(pair).prop('defaultgroup');
+			var groups = $(pair).prop('groups');
 
 			var root = $('<div></div>');
-
-			var defaultgroup = $(pair).prop('defaultgroup');
-
 			// render default group
 			root.append($('<div>' + JFusion.Text._('MAIN_USERGROUP') + '</div>'));
 
@@ -349,7 +348,7 @@ class Admin extends \JFusion\Plugin\Admin
 					options.val(group.id);
 	                options.html(group.name);
 
-		            if (pair && pair.groups && $.inArray(group.id, pair.groups) >= 0) {
+		            if (pair && groups && $.inArray(group.id, groups) >= 0) {
 		                options.attr('selected', 'selected');
 		            }
 
