@@ -16,6 +16,7 @@ use JFusion\Parser\Parser;
 use JFusion\User\Userinfo;
 use JFusion\Plugin\Platform\Joomla;
 
+use JFusionFunction;
 use Joomla\Filesystem\File;
 use Joomla\Language\Text;
 
