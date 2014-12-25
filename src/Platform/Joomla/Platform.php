@@ -721,7 +721,7 @@ HTML;
 			$db = Factory::getDatabase($this->getJname());
 
 			$query = $db->getQuery(true)
-				->select('num_posts')
+				->select('num_replies')
 				->from('#__topics')
 				->where('id_topic = ' . (int)$existingthread->threadid);
 
