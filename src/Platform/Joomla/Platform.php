@@ -1125,7 +1125,7 @@ HTML;
 					$query = $db->getQuery(true)
 						->select('code, filename')
 						->from('#__smileys')
-						->order('smileyOrder');
+						->order('smiley_order');
 
 					$db->setQuery($query);
 					$smilies = $db->loadObjectList();
