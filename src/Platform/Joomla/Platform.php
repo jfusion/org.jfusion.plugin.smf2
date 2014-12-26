@@ -462,22 +462,26 @@ class Platform extends Joomla
 		$timestamp = time();
 		$userid = $dbparams->get('default_user');
 
-		$query = $db->getQuery(true)
-			->select('member_name')
-			->from('#__members')
-			->where('id_member = ' . (int)$userid);
+		if ($userid) {
+			$query = $db->getQuery(true)
+				->select('member_name')
+				->from('#__members')
+				->where('id_member = ' . (int)$userid);
 
-		$db->setQuery($query);
-		$smfUser = $db->loadObject();
+			$db->setQuery($query);
+			$smfUser = $db->loadObject();
 
-		$post_row = new stdClass();
-		$post_row->subject			= $subject;
-		$post_row->body				= $text;
-		$post_row->modified_time 	= $timestamp;
-		$post_row->modified_name 	= $smfUser->member_name;
-		$post_row->id_msg_modified	= $postid;
-		$post_row->id_msg 			= $postid;
-		$db->updateObject('#__messages', $post_row, 'id_msg');
+			$post_row = new stdClass();
+			$post_row->subject			= $subject;
+			$post_row->body				= $text;
+			$post_row->modified_time 	= $timestamp;
+			$post_row->modified_name 	= $smfUser->member_name;
+			$post_row->id_msg_modified	= $postid;
+			$post_row->id_msg 			= $postid;
+			$db->updateObject('#__messages', $post_row, 'id_msg');
+		} else {
+			throw new RuntimeException('NO_DEFAULT_USER');
+		}
 	}
 
 	/**
