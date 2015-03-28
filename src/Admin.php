@@ -285,79 +285,81 @@ class Admin extends \JFusion\Plugin\Admin
 		JFusion.postgroups['{$jname}'] = {$postgroups};
 
 		JFusion.renderPlugin['{$jname}'] = function(index, plugin, pair, usergroups) {
-			var postgroups = JFusion.postgroups[plugin.name];
-			var defaultgroup = $(pair).prop('defaultgroup');
-			var groups = $(pair).prop('groups');
+			return (function( $ ) {
+			    var postgroups = JFusion.postgroups[plugin.name];
+				var defaultgroup = $(pair).prop('defaultgroup');
+				var groups = $(pair).prop('groups');
 
-			var root = $('<div></div>');
-			// render default group
-			root.append($('<div>' + JFusion.Text._('MAIN_USERGROUP') + '</div>'));
+				var root = $('<div></div>');
+				// render default group
+				root.append($('<div>' + JFusion.Text._('MAIN_USERGROUP') + '</div>'));
 
-			var defaultselect = $('<select></select>');
-			defaultselect.attr('name', 'usergroups['+plugin.name+']['+index+'][defaultgroup]');
-			defaultselect.attr('id', 'usergroups_'+plugin.name+index+'defaultgroup');
+				var defaultselect = $('<select></select>');
+				defaultselect.attr('name', 'usergroups['+plugin.name+']['+index+'][defaultgroup]');
+				defaultselect.attr('id', 'usergroups_'+plugin.name+index+'defaultgroup');
 
-    		$.each(usergroups, function( key, group ) {
-    			var options = $('<option></option>');
-				options.val(group.id);
-    			options.html(group.name);
-
-		        if (pair && defaultgroup && defaultgroup == group.id) {
-					options.attr('selected','selected');
-		        }
-
-				defaultselect.append(options);
-    		});
-
-		    root.append(defaultselect);
-
-
-		    // render default post groups
-		    root.append($('<div>' + JFusion.Text._('POSTGROUP') + '</div>'));
-
-			var postgroupsselect = $('<select></select>');
-			postgroupsselect.attr('name', 'usergroups['+plugin.name+']['+index+'][defaultgroup]');
-			postgroupsselect.attr('id', 'usergroups_'+plugin.name+index+'defaultgroup');
-
-    		$.each(postgroups, function( key, group ) {
-    			var options = $('<option></option>');
-				options.val(group.id);
-    			options.html(group.name);
-
-		        if (pair && defaultgroup && defaultgroup == group.id) {
-					options.attr('selected','selected');
-		        }
-
-				postgroupsselect.append(options);
-    		});
-
-    		root.append(postgroupsselect);
-
-
-			// render default member groups
-			root.append($('<div>' + JFusion.Text._('MEMBERGROUPS') + '</div>'));
-
-			var membergroupsselect = $('<select></select>');
-			membergroupsselect.attr('name', 'usergroups['+plugin.name+']['+index+'][groups][]');
-			membergroupsselect.attr('id', 'usergroups_'+plugin.name+index+'groups');
-			membergroupsselect.attr('multiple', 'multiple');
-
-    		$.each(usergroups, function( i, group ) {
-    			if (group.id !== 0) {
+	            $.each(usergroups, function( key, group ) {
 	                var options = $('<option></option>');
 					options.val(group.id);
 	                options.html(group.name);
 
-		            if (pair && groups && $.inArray(group.id, groups) >= 0) {
-		                options.attr('selected', 'selected');
-		            }
+			        if (pair && defaultgroup && defaultgroup == group.id) {
+						options.attr('selected','selected');
+			        }
 
-					membergroupsselect.append(options);
-    			}
-    		});
+					defaultselect.append(options);
+	            });
 
-		    root.append(membergroupsselect);
-		    return root;
+			    root.append(defaultselect);
+
+
+			    // render default post groups
+			    root.append($('<div>' + JFusion.Text._('POSTGROUP') + '</div>'));
+
+				var postgroupsselect = $('<select></select>');
+				postgroupsselect.attr('name', 'usergroups['+plugin.name+']['+index+'][defaultgroup]');
+				postgroupsselect.attr('id', 'usergroups_'+plugin.name+index+'defaultgroup');
+
+	            $.each(postgroups, function( key, group ) {
+	                var options = $('<option></option>');
+					options.val(group.id);
+	                options.html(group.name);
+
+			        if (pair && defaultgroup && defaultgroup == group.id) {
+						options.attr('selected','selected');
+			        }
+
+					postgroupsselect.append(options);
+	            });
+
+	            root.append(postgroupsselect);
+
+
+				// render default member groups
+				root.append($('<div>' + JFusion.Text._('MEMBERGROUPS') + '</div>'));
+
+				var membergroupsselect = $('<select></select>');
+				membergroupsselect.attr('name', 'usergroups['+plugin.name+']['+index+'][groups][]');
+				membergroupsselect.attr('id', 'usergroups_'+plugin.name+index+'groups');
+				membergroupsselect.attr('multiple', 'multiple');
+
+	            $.each(usergroups, function( i, group ) {
+	                if (group.id !== 0) {
+		                var options = $('<option></option>');
+						options.val(group.id);
+		                options.html(group.name);
+
+			            if (pair && groups && $.inArray(group.id, groups) >= 0) {
+			                options.attr('selected', 'selected');
+			            }
+
+						membergroupsselect.append(options);
+	                }
+	            });
+
+			    root.append(membergroupsselect);
+			    return root;
+			})(jQuery);
 		};
 JS;
 		return $js;
