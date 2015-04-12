@@ -10,6 +10,7 @@
  */
 
 use JFusion\Application\Application;
+use JFusion\Config;
 use JFusion\Factory;
 use JFusion\Framework;
 use JFusion\Parser\Parser;
@@ -331,7 +332,7 @@ class Platform extends Joomla
 		$smfUser = $db->loadObject();
 
 		if ($dbparams->get('use_content_created_date', false)) {
-			$timezone = Factory::getConfig()->get('offset');
+			$timezone = Config::get()->get('offset');
 			$timestamp = strtotime($contentitem->created);
 			//undo Joomla timezone offset
 			$timestamp += ($timezone * 3600);
@@ -2152,13 +2153,13 @@ HTML;
 				$js ='<script language="JavaScript" type="text/javascript">';
 				$js .= <<<JS
                 if(window.addEventListener) { // Standard
-                    window.addEventListener(\'load\', function(){
+                    window.addEventListener('load', function() {
                         {$temp[1]}
-                    }, false);
+                    }, false)
                 } else if(window.attachEvent) { // IE
-                    window.attachEvent(\'onload\', function(){
+                    window.attachEvent('onload', function() {
                         {$temp[1]}
-                    });
+                    })
                 }
 JS;
 				$js .='</script>';
