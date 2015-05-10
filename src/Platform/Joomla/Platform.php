@@ -1525,12 +1525,7 @@ HTML;
 		return $platform->getPostURL($post->id_topic, $post->id_msg);
 	}
 
-	/**
-	 * @param object $data
-	 *
-	 * @return void
-	 */
-	function getBuffer(&$data)
+	function getBuffer()
 	{
 		$mainframe = JFactory::getApplication();
 		$jFusion_Route = $mainframe->input->get('jFusion_Route', null, 'raw');
@@ -1579,7 +1574,7 @@ HTML;
 			$cookies = Factory::getCookies();
 			$cookies->addCookie($this->params->get('cookie_name'), '', 0, $this->params->get('cookie_path'), $this->params->get('cookie_domain'), $this->params->get('secure'), $this->params->get('httponly'));
 			//redirect so the changes are applied
-			$mainframe->redirect(str_replace('&amp;', '&', $data->baseURL));
+			$mainframe->redirect(str_replace('&amp;', '&', $this->data->baseURL));
 			exit();
 		}
 		//handle dual login
@@ -1636,7 +1631,6 @@ HTML;
 
 			//set the current directory to SMF
 			chdir($source_path);
-			$this->callbackdata = $data;
 			$this->callbackbypass = false;
 
 			// Get the output
@@ -1650,7 +1644,7 @@ HTML;
 				$this->callbackbypass = true;
 			}
 			while( in_array( get_class($this) . '::callback', $h) ) {
-				$data->buffer .= ob_get_contents();
+				$this->data->buffer .= ob_get_contents();
 				ob_end_clean();
 				$h = ob_list_handlers();
 			}
@@ -1701,12 +1695,7 @@ HTML;
 		return true;
 	}
 
-	/**
-	 * @param object $data
-	 *
-	 * @return void
-	 */
-	function parseBody(&$data)
+	function parseBody()
 	{
 		$regex_body		= array();
 		$replace_body	= array();
@@ -1716,7 +1705,7 @@ HTML;
 		$replace_body[] = '';
 		$callback_body[] = 'fixAction';
 
-		$regex_body[] = '#(?<=href=["\'])' . $data->integratedURL . '(.*?)(?=["\'])#mSi';
+		$regex_body[] = '#(?<=href=["\'])' . $this->data->integratedURL . '(.*?)(?=["\'])#mSi';
 		$replace_body[] = '';
 		$callback_body[] = 'fixURL';
 		$regex_body[] = '#(?<=href=["\'])(\#.*?)(?=["\'])#mSi';
@@ -1724,38 +1713,33 @@ HTML;
 		$callback_body[] = 'fixURL';
 
 		$regex_body[]	= '#sScriptUrl: \'http://joomla.fanno.dk/smf2/index.php\'#mSsi';
-		$replace_body[]	= 'sScriptUrl: \'' . $data->baseURL . '\'';
+		$replace_body[]	= 'sScriptUrl: \'' . $this->data->baseURL . '\'';
 
 		// Captcha fix
-		$regex_body[] = '#(?<=src=")' . $data->integratedURL . '(index.php\?action=verificationcode.*?)(?=")#si';
+		$regex_body[] = '#(?<=src=")' . $this->data->integratedURL . '(index.php\?action=verificationcode.*?)(?=")#si';
 		$replace_body[] = '';
 		$callback_body[] = 'fixURL';
-		$regex_body[] = '#(?<=data=")' . $data->integratedURL . '(index.php\?action=verificationcode.*?)(?=")#si';
+		$regex_body[] = '#(?<=data=")' . $this->data->integratedURL . '(index.php\?action=verificationcode.*?)(?=")#si';
 		$replace_body[] = '';
 		$callback_body[] = 'fixURL';
-		$regex_body[] = '#(?<=\(")' . $data->integratedURL . '(index.php\?action=verificationcode.*?)(?=")#si';
+		$regex_body[] = '#(?<=\(")' . $this->data->integratedURL . '(index.php\?action=verificationcode.*?)(?=")#si';
 		$replace_body[] = '';
 		$callback_body[] = 'fixUrlNoAmp';
-		$regex_body[] = '#(?<=\>)' . $data->integratedURL . '(index.php\?action=verificationcode.*?)(?=</a>)#si';
+		$regex_body[] = '#(?<=\>)' . $this->data->integratedURL . '(index.php\?action=verificationcode.*?)(?=</a>)#si';
 		$replace_body[] = '';
 		$callback_body[] = 'fixUrlNoAmp';
 
 		foreach ($regex_body as $k => $v) {
 			//check if we need to use callback
 			if(!empty($callback_body[$k])){
-				$data->body = preg_replace_callback($regex_body[$k], array(&$this, $callback_body[$k]), $data->body);
+				$this->data->body = preg_replace_callback($regex_body[$k], array(&$this, $callback_body[$k]), $this->data->body);
 			} else {
-				$data->body = preg_replace($regex_body[$k], $replace_body[$k], $data->body);
+				$this->data->body = preg_replace($regex_body[$k], $replace_body[$k], $this->data->body);
 			}
 		}
 	}
 
-	/**
-	 * @param object $data
-	 *
-	 * @return void
-	 */
-	function parseHeader(&$data)
+	function parseHeader()
 	{
 		static $regex_header, $replace_header;
 		if ( ! $regex_header || ! $replace_header )
@@ -1772,24 +1756,24 @@ HTML;
 
 			//convert relative links into absolute links
 			$regex_header[]	= '#(href|src)=("./|"/)(.*?)"#mS';
-			$replace_header[]	= '$1="' . $data->integratedURL . '$3"';
+			$replace_header[]	= '$1="' . $this->data->integratedURL . '$3"';
 
 			//$regex_header[]	= '#(href|src)="(.*)"#mS';
-			//$replace_header[]	= 'href="' . $data->integratedURL . '$2"';
+			//$replace_header[]	= 'href="' . $this->data->integratedURL . '$2"';
 
 			//convert relative links into absolute links
 			$regex_header[]	= '#(href|src)=("./|"/)(.*?)"#mS';
-			$replace_header[]	= '$1="' . $data->integratedURL . '$3"';
+			$replace_header[]	= '$1="' . $this->data->integratedURL . '$3"';
 
 			$regex_header[] = '#var smf_scripturl = ["\'](.*?)["\'];#mS';
 			$replace_header[] = 'var smf_scripturl = "' . $baseURLnoSef . '&";';
 
 			//fix for URL redirects
-			$regex_body[] = '#(?<=")' . $data->integratedURL . '(index.php\?action=verificationcode;rand=.*?)(?=")#si';
-			$replace_body[] = ''; //\'"\' . $this->fixUrl('index.php?$2$3',"' . $data->baseURL . '","' . $data->fullURL . '") . \'"\'';
+			$regex_body[] = '#(?<=")' . $this->data->integratedURL . '(index.php\?action=verificationcode;rand=.*?)(?=")#si';
+			$replace_body[] = ''; //\'"\' . $this->fixUrl('index.php?$2$3',"' . $this->data->baseURL . '","' . $this->data->fullURL . '") . \'"\'';
 			$callback_body[] = 'fixRedirect';
 		}
-		$data->header = preg_replace($regex_header, $replace_header, $data->header);
+		$this->data->header = preg_replace($regex_header, $replace_header, $this->data->header);
 	}
 
 	/**
@@ -2114,17 +2098,16 @@ HTML;
 	 * @return mixed|string
 	 */
 	function callback($buffer) {
-		$data = $this->callbackdata;
 		$headers_list = headers_list();
 		foreach ($headers_list as $value) {
 			$matches = array();
 			if (stripos($value, 'location') === 0) {
-				if (preg_match('#' . preg_quote($data->integratedURL, '#') . '(.*?)\z#Sis', $value, $matches)) {
+				if (preg_match('#' . preg_quote($this->data->integratedURL, '#') . '(.*?)\z#Sis', $value, $matches)) {
 					header('Location: ' . $this->fixUrlNoAmp($matches));
 					return $buffer;
 				}
 			} else if (stripos($value, 'refresh') === 0) {
-				if (preg_match('#: (.*?) URL=' . preg_quote($data->integratedURL, '#') . '(.*?)\z#Sis', $value, $matches)) {
+				if (preg_match('#: (.*?) URL=' . preg_quote($this->data->integratedURL, '#') . '(.*?)\z#Sis', $value, $matches)) {
 					$time = $matches[1];
 					$matches[1] = $matches[2];
 					header('Refresh: ' . $time . ' URL=' . $this->fixUrlNoAmp($matches));
@@ -2142,12 +2125,12 @@ HTML;
 		}
 
 		//fix for form actions
-		$data->buffer = $buffer;
-		ini_set('pcre.backtrack_limit', strlen($data->buffer) * 2);
+		$this->data->buffer = $buffer;
+		ini_set('pcre.backtrack_limit', strlen($this->data->buffer) * 2);
 		$pattern = '#<head[^>]*>(.*?)<\/head>.*?<body([^>]*)>(.*)<\/body>#si';
-		if (preg_match($pattern, $data->buffer, $temp)) {
-			$data->header = $temp[1];
-			$data->body = $temp[3];
+		if (preg_match($pattern, $this->data->buffer, $temp)) {
+			$this->data->header = $temp[1];
+			$this->data->body = $temp[3];
 			$pattern = '#onload=["]([^"]*)#si';
 			if (preg_match($pattern, $temp[2], $temp)) {
 				$js ='<script language="JavaScript" type="text/javascript">';
@@ -2163,12 +2146,12 @@ HTML;
                 }
 JS;
 				$js .='</script>';
-				$data->header.= $js;
+				$this->data->header.= $js;
 			}
 			unset($temp);
-			$this->parseHeader($data);
-			$this->parseBody($data);
-			return '<html><head>' . $data->header . '</head><body>' . $data->body . '<body></html>';
+			$this->parseHeader();
+			$this->parseBody();
+			return '<html><head>' . $this->data->header . '</head><body>' . $this->data->body . '<body></html>';
 		} else {
 			return $buffer;
 		}
