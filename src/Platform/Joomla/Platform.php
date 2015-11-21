@@ -584,7 +584,7 @@ HTML;
 				->select('t.id_first_msg , t.num_replies, m.subject')
 				->from('#__messages as m')
 				->innerJoin('#__topics as t ON t.id_topic = m.id_topic')
-				->where('id_topic = ' . (int)$ids->threadid)
+				->where('t.id_topic = ' . (int)$ids->threadid)
 				->where('m.id_msg = t.id_first_msg');
 
 			$db->setQuery($query);
